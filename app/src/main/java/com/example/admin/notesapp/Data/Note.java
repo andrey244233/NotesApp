@@ -9,21 +9,19 @@ import io.realm.annotations.Required;
 
 public class Note extends RealmObject {
 
-//    @PrimaryKey
-//    private long id;
-
+    @PrimaryKey
+    private String id;
     private String text;
     private Boolean notification;
     private Date notificationTime;
 
+    public String getId() {
+        return id;
+    }
 
-//    public long getId() {
-//        return id;
-//    }
-//
-//    public void setId(int id) {
-//        this.id = id;
-//    }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getText() {
         return text;

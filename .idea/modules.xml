@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NotesApp.iml" filepath="$PROJECT_DIR$/NotesApp.iml" />
+      <module fileurl="file://E:\AndroidProjects\NotesApp\NotesApp.iml" filepath="E:\AndroidProjects\NotesApp\NotesApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://E:\AndroidProjects\NotesApp\app\app.iml" filepath="E:\AndroidProjects\NotesApp\app\app.iml" />
     </modules>
   </component>
 </project>

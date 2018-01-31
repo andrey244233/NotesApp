@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">NotesApp</string>
     <string name="switch_notification">Уведомление</string>
+    <string name="hint_note_text">Fill in with your note text</string>
 </resources>

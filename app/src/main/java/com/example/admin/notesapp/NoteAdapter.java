@@ -48,9 +48,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         this.contextMenuClickCallBack = contextManuClickCallBack;
     }
 
-
-
-
     @Override
     public NoteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item, parent, false);
@@ -71,8 +68,19 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         return listNotes.size();
     }
 
-    public void setData(ArrayList<Note> listNotes) {
-        this.listNotes = listNotes;
+//    public void setData(ArrayList<Note> listNotes) {
+//        this.listNotes = listNotes;
+//        notifyDataSetChanged();
+//    }
+
+    public void swap(ArrayList<Note> notes)
+    {
+        if(notes == null || notes.size()==0)
+            return;
+        if (notes != null && notes.size()>0)
+            listNotes.clear();
+       // listNotes.addAll(notes);
+        listNotes = notes;
         notifyDataSetChanged();
     }
 

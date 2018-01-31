@@ -1,5 +1,6 @@
-package com.example.admin.notesapp;
+package com.example.admin.notesapp.MainActivityPackage;
 
+import android.content.Context;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.example.admin.notesapp.NoteAdapter;
 import com.example.admin.notesapp.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -41,9 +43,9 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //   setTheme(R.style.splashScreenTheme);
+        //  setTheme(R.style.splashScreenTheme);
         super.onCreate(savedInstanceState);
-        //  setTheme(R.style.AppTheme);
+        //setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
         makeFloatActionButtonHideAndShow();
         fab.setOnClickListener(fabOnClickListener);
         registerForContextMenu(noteRecyclerView);
+
+        checkNotes();
         //ID = notes.size();
     }
 
@@ -92,12 +96,17 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
     View.OnClickListener fabOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            mainActivityPresenter.addNewNote();
+            mainActivityPresenter.addNewNote(MainActivity.this);
             mainActivityPresenter.getNotesFromRealm();
-            noteAdapter.setData(notes);
-            for(int i = 0; i< notes.size(); i++){
-              // Log.v("tag", "note id =" + notes.get(i).getId() ) ;
-            }
+
+
+            noteAdapter.swap(notes);
+            noteRecyclerView.setAdapter(noteAdapter);
+//
+//
+//            noteRecyclerView.setData();
+//            noteRecyclerView.remove
+            checkNotes();
         }
     };
 
@@ -109,21 +118,31 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
+
             case CONTEXT_MENU_EDIT:
-                mainActivityPresenter.editNoteById(adapterPosition);
+                Log.v("tag", "edit in contexte menu");
+                Note note = notes.get(adapterPosition);
+                String text = note.getText();
+                Log.v("tag", "text =" + text);
+                Date date = note.getNotificationTime();
+                mainActivityPresenter.editNoteById(MainActivity.this, text, date);
                 Log.v("tag", "item =" + adapterPosition);
                 break;
 
             case CONTEXT_MENU_DELETE:
-                Log.v("tag", "menu delete =" + adapterPosition);
-                mainActivityPresenter.deleteNoteById(adapterPosition);
-//
-//    mainActivityPresenter.getNotesFromRealm();
-//                noteAdapter.setData(notes);
-       noteAdapter.notifyItemRemoved(adapterPosition);
-                Log.v("tag", "item =" + adapterPosition);
+                Note note1 = notes.get(adapterPosition);
+                //Note note = notes.get(adapterPosition);
+                //String id = note.getId();
+//              int id = note.getId();
+                Log.v("tag", "item =" + adapterPosition + "id = " + note1.getId());
+                mainActivityPresenter.deleteNoteById(note1.getId());
+
+                mainActivityPresenter.getNotesFromRealm();
+                noteAdapter.swap(notes);
+
+                checkNotes();
+                //
                 break;
         }
 
@@ -134,6 +153,13 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
     @Override
     public void onContextItemClick(int adapterPosition) {
         this.adapterPosition = adapterPosition;
+    }
+
+
+    private void checkNotes() {
+        for (Note n : notes) {
+            Log.v("tag", "Note name = " + n.getText() + "note Id =" + n.getId());
+        }
     }
 }
 
