@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
                 Log.v("tag", "text =" + text);
                 Date date = note.getNotificationTime();
                 mainActivityPresenter.editNoteById(MainActivity.this, text, date);
-                Log.v("tag", "item =" + adapterPosition);
+                Log.v("tag", "DATA IN MAIN ACTIVITY =" + date.toString());
                 break;
 
             case CONTEXT_MENU_DELETE:

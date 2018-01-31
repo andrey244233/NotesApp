@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.admin.notesapp.MainActivityPackage.MainActivityPresenter;
 import com.example.admin.notesapp.R;
 import com.example.admin.notesapp.ReturnDataCallBack;
 
@@ -44,6 +45,7 @@ public class AddNewNoteActivity extends AppCompatActivity implements ReturnDataC
     Long time;
     public static final int DATE_PICKER_DIALOG = 1;
     public static final int TIME_PICKER_DIALOG = 2;
+    DatePickerDialog datePickerDialog;
 
     private int yearToSave;
     private int monthToSave;
@@ -52,10 +54,13 @@ public class AddNewNoteActivity extends AppCompatActivity implements ReturnDataC
     private int minutes;
     private Callback callback;
 
-    public interface Callback{
+    public interface Callback {
         void callingBack(String s);
     }
 
+    public void registerCallBack(Callback callback) {  //подумать о том что может и не надо передавать колбек в єту активити, а просто назначить колбек и он сюда подтянется
+        this.callback = callback;
+    }
 //    int year;
 //    int month;
 //    int
@@ -69,14 +74,29 @@ public class AddNewNoteActivity extends AppCompatActivity implements ReturnDataC
         btnSubmit.setOnClickListener(submmitOnClickListener);
         calendar = Calendar.getInstance();
 
-        Intent intent = getIntent();
-        Log.v("tag", "get intent not null");
-        text = intent.getStringExtra(NOTE_TEXT);
-        Log.v("tag", "tetx" + text);
-        date = intent.getParcelableExtra(NOTE_DATE);
-        Log.v("tag", "date" + date);
-        tvTimeDate.setText((CharSequence) date);
-        edText.setText(text);
+
+        if (getIntent().hasExtra(NOTE_TEXT)) {
+            text = getIntent().getStringExtra(NOTE_TEXT);
+            date = (Date) getIntent().getSerializableExtra(NOTE_DATE);
+            edText.setText(text);
+            tvTimeDate.setText(date.toString());
+        }
+        //        callback = (Callback) intent;
+//        Log.v("tag", "callback" + callback);
+//
+//
+////        Intent intent = getIntent();
+//        callback = (Callback) intent.getSerializableExtra("callback");
+////        this.registerCallBack(callback);
+////       // callback = (Callback) intent.getSerializableExtra("callBack");
+////        Log.v("atg", "add new noteActivity and callback = " + callback);
+////        Log.v("tag", "get intent not null");
+////        text = intent.getStringExtra(NOTE_TEXT);
+////        Log.v("tag", "tetx" + text);
+////        date = intent.getParcelableExtra(NOTE_DATE);
+////        Log.v("tag", "date" + date);
+////        tvTimeDate.setText((CharSequence) date);
+////        edText.setText(text);
 
     }
 
@@ -95,8 +115,9 @@ public class AddNewNoteActivity extends AppCompatActivity implements ReturnDataC
     };
 
     private void submit() {
-       // Date date = new Date(1, 1,1);
-    callback.callingBack(edText.getText().toString());
+        // Date date = new Date(1, 1,1);
+        callback.callingBack(edText.getText().toString());
+        // finish();
     }
 
     private void setNotification() {
@@ -108,16 +129,27 @@ public class AddNewNoteActivity extends AppCompatActivity implements ReturnDataC
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case DATE_PICKER_DIALOG:
-                DatePickerDialog datePickerDialog = new DatePickerDialog(AddNewNoteActivity.this, new DatePickerDialog.OnDateSetListener() {
+                  datePickerDialog = new DatePickerDialog(AddNewNoteActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
+                    Log.v("tag", "year " + year);
+                    Log.v("tag", "month " + month);
+                    Log.v("tag", "day " + dayOfMonth);
+
+                        yearToSave =year;
+                        monthToSave = month;
+                        dayToSave = dayOfMonth;
+                       // datePickerDialog.onDateChanged();
 
                     }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
                 datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                      //  datePickerDialog.onDateChanged();
+                        Log.v("tag", "year " + yearToSave);
+                        Log.v("tag", "month " + monthToSave);
                         showDialog(TIME_PICKER_DIALOG);
                     }
                 });
@@ -136,12 +168,16 @@ public class AddNewNoteActivity extends AppCompatActivity implements ReturnDataC
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         int time = hourOfDay;
                         int minutes = minute;
+                        Log.v("tag", "time " + time);
+                        Log.v("tag", "minutes " + minutes);
                     }
                 }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
                 timePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        tvTimeDate.setText(time.toString() + minutes);
+                      //  tvTimeDate.setText(time.toString() + String.valueOf(minutes));
+                        Log.v("tag", "time2 " + time);
+                        Log.v("tag", "minutes2 " + minutes);
                     }
                 });
                 timePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", new DialogInterface.OnClickListener() {
