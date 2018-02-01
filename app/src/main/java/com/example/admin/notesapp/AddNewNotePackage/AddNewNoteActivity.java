@@ -1,199 +1,130 @@
 package com.example.admin.notesapp.AddNewNotePackage;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
-
-import com.example.admin.notesapp.MainActivityPackage.MainActivityPresenter;
 import com.example.admin.notesapp.R;
-import com.example.admin.notesapp.ReturnDataCallBack;
 
-
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import static com.example.admin.notesapp.MainActivityPackage.MainActivityPresenter.NOTE_DATE;
+import static com.example.admin.notesapp.MainActivityPackage.MainActivityPresenter.NOTE_ID;
+import static com.example.admin.notesapp.MainActivityPackage.MainActivityPresenter.NOTE_NOTIFICATION_ON;
 import static com.example.admin.notesapp.MainActivityPackage.MainActivityPresenter.NOTE_TEXT;
 
-public class AddNewNoteActivity extends AppCompatActivity implements ReturnDataCallBack {
+public class AddNewNoteActivity extends AppCompatActivity implements DatePickerFragment.ReturnDateCallback, TimePickerDialog.ReturnTimeCallBack {
 
-    @BindView(R.id.btn_set_notification)
-    Button btnSetNotification;
-    @BindView(R.id.btn_submit)
-    Button btnSubmit;
     @BindView(R.id.ed_text)
     EditText edText;
     @BindView(R.id.tv_time_and_date)
     TextView tvTimeDate;
+    @BindView(R.id.switch_notification)
+    Switch switchNotification;
+    @BindView(R.id.btn_set_notification)
+    Button btnNotification;
+    @BindView(R.id.btn_submit)
+    Button btnSubmit;
     Calendar calendar;
     String text;
     Date date = new Date();
-    Long time;
-    public static final int DATE_PICKER_DIALOG = 1;
-    public static final int TIME_PICKER_DIALOG = 2;
-    DatePickerDialog datePickerDialog;
+    String id = "";
+    Boolean notificationOn = false;
 
-    private int yearToSave;
-    private int monthToSave;
-    private int dayToSave;
-    private int hour;
-    private int minutes;
-    private Callback callback;
-
-    public interface Callback {
-        void callingBack(String s);
-    }
-
-    public void registerCallBack(Callback callback) {  //подумать о том что может и не надо передавать колбек в єту активити, а просто назначить колбек и он сюда подтянется
-        this.callback = callback;
-    }
-//    int year;
-//    int month;
-//    int
-
+    AddEditNoteActivityPresenter addEditNoteActivityPresenter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_note);
         ButterKnife.bind(this);
-        btnSetNotification.setOnClickListener(notificationOnclickListener);
-        btnSubmit.setOnClickListener(submmitOnClickListener);
+        switchNotification.setOnCheckedChangeListener(switchNotificationListener);
         calendar = Calendar.getInstance();
-
+        setTitle("Создать заметку");
+        addEditNoteActivityPresenter = new AddEditNoteActivityPresenter();
 
         if (getIntent().hasExtra(NOTE_TEXT)) {
+            setTitle("Редактировать заметку");
+            btnSubmit.setText("Редактировать заметку");
+            id = getIntent().getStringExtra(NOTE_ID);
             text = getIntent().getStringExtra(NOTE_TEXT);
             date = (Date) getIntent().getSerializableExtra(NOTE_DATE);
+            notificationOn = getIntent().getBooleanExtra(NOTE_NOTIFICATION_ON, false);
             edText.setText(text);
             tvTimeDate.setText(date.toString());
+            Log.v("tag", "hasExtra");
+            Log.v("tag", "text" + text + " id" + id + " date " + date.toString() + notificationOn + notificationOn.toString() );
         }
-        //        callback = (Callback) intent;
-//        Log.v("tag", "callback" + callback);
-//
-//
-////        Intent intent = getIntent();
-//        callback = (Callback) intent.getSerializableExtra("callback");
-////        this.registerCallBack(callback);
-////       // callback = (Callback) intent.getSerializableExtra("callBack");
-////        Log.v("atg", "add new noteActivity and callback = " + callback);
-////        Log.v("tag", "get intent not null");
-////        text = intent.getStringExtra(NOTE_TEXT);
-////        Log.v("tag", "tetx" + text);
-////        date = intent.getParcelableExtra(NOTE_DATE);
-////        Log.v("tag", "date" + date);
-////        tvTimeDate.setText((CharSequence) date);
-////        edText.setText(text);
 
+        if(!notificationOn){
+            Log.v("tag", "make it visible");
+            tvTimeDate.setVisibility(View.GONE);
+            btnNotification.setVisibility(View.GONE);
+        }
+        Log.v("tag", " don't hasExtra");
+        Log.v("tag", "text" + text + " id" + id + " date " + date.toString() + notificationOn + notificationOn.toString() );
     }
 
-    View.OnClickListener notificationOnclickListener = new View.OnClickListener() {
+    CompoundButton.OnCheckedChangeListener switchNotificationListener = new CompoundButton.OnCheckedChangeListener() {
         @Override
-        public void onClick(View v) {
-            setNotification();
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                  if(isChecked){
+                      tvTimeDate.setVisibility(View.VISIBLE);
+                      btnNotification.setVisibility(View.VISIBLE);
+                      notificationOn = true;
+                      Log.v("tag", " is checked notification =" + notificationOn);
+                  }else{
+                      tvTimeDate.setVisibility(View.GONE);
+                      btnNotification.setVisibility(View.GONE);
+                      notificationOn = false;
+                      Log.v("tag", " is checked notification =" + notificationOn);
+                  }
         }
     };
 
-    View.OnClickListener submmitOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            submit();
-        }
-    };
-
-    private void submit() {
-        // Date date = new Date(1, 1,1);
-        callback.callingBack(edText.getText().toString());
-        // finish();
+    private void openDatePickerDialog() {
+        DatePickerFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.show(getSupportFragmentManager(), "DatePicker");
     }
 
-    private void setNotification() {
-        showDialog(DATE_PICKER_DIALOG);
+    private void openTimePickerDialog() {
+        TimePickerDialog timePickerDialog = new TimePickerDialog();
+        timePickerDialog.show(getSupportFragmentManager(), "TimePicker");
     }
 
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DATE_PICKER_DIALOG:
-                  datePickerDialog = new DatePickerDialog(AddNewNoteActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-                    Log.v("tag", "year " + year);
-                    Log.v("tag", "month " + month);
-                    Log.v("tag", "day " + dayOfMonth);
-
-                        yearToSave =year;
-                        monthToSave = month;
-                        dayToSave = dayOfMonth;
-                       // datePickerDialog.onDateChanged();
-
-                    }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-                datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                      //  datePickerDialog.onDateChanged();
-                        Log.v("tag", "year " + yearToSave);
-                        Log.v("tag", "month " + monthToSave);
-                        showDialog(TIME_PICKER_DIALOG);
-                    }
-                });
-                datePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dismissDialog(DATE_PICKER_DIALOG);
-                        Log.v("tag", "negative button");
-                    }
-                });
-                return datePickerDialog;
-
-            case TIME_PICKER_DIALOG:
-                TimePickerDialog timePickerDialog = new TimePickerDialog(AddNewNoteActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        int time = hourOfDay;
-                        int minutes = minute;
-                        Log.v("tag", "time " + time);
-                        Log.v("tag", "minutes " + minutes);
-                    }
-                }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
-                timePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                      //  tvTimeDate.setText(time.toString() + String.valueOf(minutes));
-                        Log.v("tag", "time2 " + time);
-                        Log.v("tag", "minutes2 " + minutes);
-                    }
-                });
-                timePickerDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dismissDialog(TIME_PICKER_DIALOG);
-                        showDialog(DATE_PICKER_DIALOG);
-                    }
-                });
-                return timePickerDialog;
+    public void submitNote(View view) {
+        if(id.isEmpty()){
+            Log.v("tag", "id is empty =" + id + "text =" + text);
+            addEditNoteActivityPresenter.addNewNoteToRealm(edText.getText().toString(), date, notificationOn, this);
+        }else{
+            Log.v("tag", "id is not empty=" + id + "text =" + text);
+            addEditNoteActivityPresenter.editNoteInRealm(id, edText.getText().toString(), date, notificationOn, this);
         }
-        return super.onCreateDialog(id);
+    }
+
+    public void setNotification(View view) {
+        openDatePickerDialog();
     }
 
     @Override
-    public void returnData() {
+    public void returnDate(Date date) {
+        this.date = date;
+        openTimePickerDialog();
+    }
 
+    @Override
+    public void returnTime(int hours, int minutes) {
+        date.setHours(hours);
+        date.setMinutes(minutes);
+        SimpleDateFormat sdf = new SimpleDateFormat( "Дата: dd'/'MM'/'yy 'Время:' HH:mm ");
+        tvTimeDate.setText(sdf.format(date));
     }
 }

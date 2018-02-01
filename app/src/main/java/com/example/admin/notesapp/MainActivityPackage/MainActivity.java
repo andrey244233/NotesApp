@@ -96,17 +96,7 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
     View.OnClickListener fabOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            mainActivityPresenter.addNewNote(MainActivity.this);
-            mainActivityPresenter.getNotesFromRealm();
-
-
-            noteAdapter.swap(notes);
-            noteRecyclerView.setAdapter(noteAdapter);
-//
-//
-//            noteRecyclerView.setData();
-//            noteRecyclerView.remove
-            checkNotes();
+            addNewNote();
         }
     };
 
@@ -115,37 +105,16 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
         this.notes = notes;
     }
 
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-
             case CONTEXT_MENU_EDIT:
-                Log.v("tag", "edit in contexte menu");
-                Note note = notes.get(adapterPosition);
-                String text = note.getText();
-                Log.v("tag", "text =" + text);
-                Date date = note.getNotificationTime();
-                mainActivityPresenter.editNoteById(MainActivity.this, text, date);
-                Log.v("tag", "DATA IN MAIN ACTIVITY =" + date.toString());
+                editNote();
                 break;
-
             case CONTEXT_MENU_DELETE:
-                Note note1 = notes.get(adapterPosition);
-                //Note note = notes.get(adapterPosition);
-                //String id = note.getId();
-//              int id = note.getId();
-                Log.v("tag", "item =" + adapterPosition + "id = " + note1.getId());
-                mainActivityPresenter.deleteNoteById(note1.getId());
-
-                mainActivityPresenter.getNotesFromRealm();
-                noteAdapter.swap(notes);
-
-                checkNotes();
-                //
+                deleteNote();
                 break;
         }
-
         return super.onContextItemSelected(item);
     }
 
@@ -155,11 +124,36 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
         this.adapterPosition = adapterPosition;
     }
 
-
     private void checkNotes() {
         for (Note n : notes) {
             Log.v("tag", "Note name = " + n.getText() + "note Id =" + n.getId());
         }
     }
-}
 
+    public void addNewNote() {
+        mainActivityPresenter.addNewNote(MainActivity.this);
+    }
+
+    public void editNote() {
+        Note note = notes.get(adapterPosition);
+        String id = note.getId();
+        String text = note.getText();
+        Date date = note.getNotificationTime();
+        Boolean notification = note.getNotification();
+        mainActivityPresenter.editNoteById(id, text, date, notification, MainActivity.this);
+    }
+
+    public void deleteNote() {
+        Note note1 = notes.get(adapterPosition);
+        mainActivityPresenter.deleteNoteById(note1.getId());
+    }
+
+    public void showAllNotes() {
+        mainActivityPresenter.getNotesFromRealm();
+        noteAdapter.swap(notes);
+        noteRecyclerView.setAdapter(noteAdapter); // но это не точно
+        checkNotes();
+    }
+
+
+}

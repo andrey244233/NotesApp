@@ -25,47 +25,77 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.187" />
 
-    <Button
-        android:id="@+id/btn_set_notification"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="276dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="32dp"
-        android:ems="9"
-        android:text="Включить уведомление"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="108dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/tv_time_and_date"
-        app:layout_constraintHorizontal_bias="0.115"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/ed_text"
+        app:layout_constraintVertical_bias="0.0">
+
+        <Button
+            android:visibility="gone"
+            android:id="@+id/btn_set_notification"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1"
+            android:ems="9"
+            android:onClick="setNotification"
+            android:text="Включить уведомление" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_time_and_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
+            android:text="Время уведомления" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_submit"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginBottom="196dp"
-        android:layout_marginEnd="256dp"
-        android:layout_marginStart="36dp"
-        android:text="Создать"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="132dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:onClick="submitNote"
+        android:text="Создать заметку"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
-    <TextView
-        android:id="@+id/tv_time_and_date"
+    <Switch
+        android:id="@+id/switch_notification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="56dp"
-        android:text="Время уведомления"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Уведомление"
+        android:textOff="вкл"
+        android:textOn="выкл"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.789"
-        app:layout_constraintStart_toEndOf="@+id/btn_submit"
-        app:layout_constraintTop_toBottomOf="@+id/ed_text" />
+        app:layout_constraintHorizontal_bias="0.269"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ed_text"
+        app:layout_constraintVertical_bias="0.765" />
+
+
 </android.support.constraint.ConstraintLayout>
 
 

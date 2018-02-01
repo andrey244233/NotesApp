@@ -8,5 +8,5 @@ import java.util.Date;
 public interface MainActivityInterface {
 
     void returnNotesFromRealm(ArrayList<Note> notes);
-    //void returnData(String text, Date date);
+
 }
