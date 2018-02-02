@@ -1,0 +1,65 @@
+<com.getbase.floatingactionbutton.FloatingActionsMenu android:id="@+id/multiple_actions"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom|right"
+    android:layout_marginBottom="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginRight="16dp"
+    fab:fab_labelStyle="@style/menu_labels_style"
+    fab:fab_addButtonColorNormal="@color/colorAccent"
+    fab:fab_addButtonColorPressed="@color/white_pressed"
+    fab:fab_addButtonPlusIconColor="@color/colorPrimaryDark"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:onClick="floatButtonsOnClick"
+        android:id="@+id/fb_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_addButtonSize="mini"
+        fab:fab_colorNormal="@color/colorPrimaryDark"
+        fab:fab_colorPressed="@color/white_pressed"
+        fab:fab_title="Выход" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:onClick="floatButtonsOnClick"
+        android:id="@+id/fb_open_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_addButtonSize="mini"
+        fab:fab_colorNormal="@color/colorPrimaryDark"
+        fab:fab_colorPressed="@color/white_pressed"
+        fab:fab_title="Открыть настройки" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:onClick="floatButtonsOnClick"
+        android:id="@+id/fb_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_colorNormal="@color/colorAccent"
+        fab:fab_colorPressed="@color/white_pressed"
+        fab:fab_title="Больше опций" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:onClick="floatButtonsOnClick"
+        android:id="@+id/fb_add_by_voice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fab_size="mini"
+        fab:fab_colorNormal="@color/colorPrimaryDark"
+        fab:fab_colorPressed="@color/white_pressed"
+        fab:fab_title="Добавить заметку голосом" />
+
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:onClick="floatButtonsOnClick"
+        android:id="@+id/fb_add_by_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fab_size="mini"
+        fab:fab_colorNormal="@color/colorPrimaryDark"
+        fab:fab_colorPressed="@color/white_pressed"
+        fab:fab_title="Добавить заметку" />
+</com.getbase.floatingactionbutton.FloatingActionsMenu>

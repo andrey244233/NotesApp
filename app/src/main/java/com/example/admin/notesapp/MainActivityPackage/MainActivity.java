@@ -1,11 +1,14 @@
 package com.example.admin.notesapp.MainActivityPackage;
 
 import android.content.Context;
+import android.content.Intent;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -19,6 +22,7 @@ import com.example.admin.notesapp.MainActivityPackage.MainActivityInterface;
 import com.example.admin.notesapp.MainActivityPackage.MainActivityPresenter;
 import com.example.admin.notesapp.NoteAdapter;
 import com.example.admin.notesapp.R;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,15 +35,28 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
 
     @BindView(R.id.note_recyclre_view)
     RecyclerView noteRecyclerView;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
+    @BindView(R.id.fb_open_settings)
+    com.getbase.floatingactionbutton.FloatingActionButton fabOpenSettings;
+    @BindView(R.id.fb_exit)
+    com.getbase.floatingactionbutton.FloatingActionButton fabExit;
+
+//    @BindView(R.id.fb_add_by_text)
+//    com.getbase.floatingactionbutton.FloatingActionButton fabAddByText;
+//    @BindView(R.id.fb_add_by_voice)
+//    com.getbase.floatingactionbutton.FloatingActionButton fabAddByVoice;
+//    @BindView(R.id.fb_more)
+//    com.getbase.floatingactionbutton.FloatingActionButton fabMoreOptions;
+
+
     int adapterPosition;
     MainActivityPresenter mainActivityPresenter;
     ArrayList<Note> notes = new ArrayList<>();
     NoteAdapter noteAdapter;
+    FloatingActionsMenu floatingActionsMenu;
     //int ID = 0;
     public static final int CONTEXT_MENU_EDIT = 0;
     public static final int CONTEXT_MENU_DELETE = 1;
+    public static final int REQ_CODE_SPEECH_INPUT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +65,10 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
         //setTheme(R.style.AppTheme);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        floatingActionsMenu = findViewById(R.id.multiple_actions);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        toolbar.setTitle("ggggggg");
 
 
         //беру данные из реалма и показываю их в ресайклвью
@@ -61,12 +82,13 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
         noteRecyclerView.setAdapter(noteAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         noteRecyclerView.setLayoutManager(linearLayoutManager);
-        makeFloatActionButtonHideAndShow();
-        fab.setOnClickListener(fabOnClickListener);
+        // makeFloatActionButtonHideAndShow();
         registerForContextMenu(noteRecyclerView);
 
-        checkNotes();
-        //ID = notes.size();
+        // setFloatButtons();
+        //   makeFloatActionButtonHideAndShow();
+
+
     }
 
     //@Override
@@ -80,9 +102,12 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy < 0) {
-                    fab.show();
+                    floatingActionsMenu.collapse();
+                    floatingActionsMenu.setVisibility(View.VISIBLE);
                 } else if (dy > 0) {
-                    fab.hide();
+                    floatingActionsMenu.collapse();
+                    floatingActionsMenu.setVisibility(View.INVISIBLE);
+                    //fab.hide();
                 }
             }
         });
@@ -134,6 +159,14 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
         mainActivityPresenter.addNewNote(MainActivity.this);
     }
 
+    public void addNewNote(String text) {
+        mainActivityPresenter.addNewNote(MainActivity.this, text);
+    }
+
+    public void addNewNoteByVoice() {
+        mainActivityPresenter.addNewNoteByVoice(this);
+    }
+
     public void editNote() {
         Note note = notes.get(adapterPosition);
         String id = note.getId();
@@ -156,4 +189,38 @@ public class MainActivity extends AppCompatActivity implements NoteAdapter.ItemC
     }
 
 
+    public void floatButtonsOnClick(View v) {
+        switch (v.getId()) {
+            case R.id.fb_add_by_text:
+                addNewNote();
+                break;
+            case R.id.fb_add_by_voice:
+                addNewNoteByVoice();
+                break;
+            case R.id.fb_more:
+                fabOpenSettings.setVisibility(fabOpenSettings.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                fabExit.setVisibility(fabExit.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                break;
+            case R.id.fb_open_settings:
+                Log.v("tag", "open settings");
+                break;
+            case R.id.fb_exit:
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+                    String text = data.getStringExtra(RecognizerIntent.EXTRA_RESULTS);
+                    addNewNote(text);
+                }
+            }
+            break;
+        }
+    }
 }

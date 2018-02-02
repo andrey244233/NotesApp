@@ -51,7 +51,7 @@ public class AddNewNoteActivity extends AppCompatActivity implements DatePickerF
         setTitle("Создать заметку");
         addEditNoteActivityPresenter = new AddEditNoteActivityPresenter();
 
-        if (getIntent().hasExtra(NOTE_TEXT)) {
+        if (getIntent().hasExtra(NOTE_ID)) {
             setTitle("Редактировать заметку");
             btnSubmit.setText("Редактировать заметку");
             id = getIntent().getStringExtra(NOTE_ID);
@@ -62,6 +62,9 @@ public class AddNewNoteActivity extends AppCompatActivity implements DatePickerF
             tvTimeDate.setText(date.toString());
             Log.v("tag", "hasExtra");
             Log.v("tag", "text" + text + " id" + id + " date " + date.toString() + notificationOn + notificationOn.toString() );
+        }else{
+            text = getIntent().getStringExtra(NOTE_TEXT);
+            edText.setText(text);
         }
 
         if(!notificationOn){
