@@ -1,6 +1,7 @@
 package com.example.admin.notesapp;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -8,9 +9,9 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
-
 import com.example.admin.notesapp.Data.Note;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     private Switch switchNotification;
     private ItemClickCallBack itemClickCallBack;
     private ContextMenuClickCallBack contextMenuClickCallBack;
+    private Button btnDelete;
 
     public NoteAdapter(Context context, ArrayList<Note> notes) {
         mContext = context;
@@ -56,11 +58,17 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
 
     @Override
     public void onBindViewHolder(NoteViewHolder holder, int position) {
+
         Note currentNote = listNotes.get(position);
         tvTimeForNotification.setText(currentNote.getNotificationTime().toString());
         tvText.setText(currentNote.getText());
         boolean notify = currentNote.getNotification();
         switchNotification.setChecked(notify);
+
+       // binderHelper.bind(swipeLayout, "data");
+
+        //binderHelper.bind(holder.swipeLayout, data);
+
     }
 
     @Override
@@ -84,6 +92,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
         notifyDataSetChanged();
     }
 
+
+
     public class NoteViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener {
         public NoteViewHolder(View itemView) {
             super(itemView);
@@ -94,6 +104,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             switchNotification.setOnClickListener(this);
             cardView.setOnClickListener(this);
             cardView.setOnCreateContextMenuListener(this);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
+            btnDelete.setOnClickListener(this);
         }
 
 
@@ -106,6 +118,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
                 case R.id.switchNotification:
                     itemClickCallBack.onItemClick(getAdapterPosition(), v);
                     break;
+                case R.id.btn_delete:
+                    itemClickCallBack.onItemClick(getAdapterPosition(), v);
+                    break;
+
             }
         }
 
@@ -120,4 +136,20 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
             contextMenuClickCallBack.onContextItemClick(getAdapterPosition());
         }
     }
+
+    public void filter(String text) {
+       listNotes.clear();
+        if(text.isEmpty()){
+            listNotes.addAll(listNotes);
+        } else{
+            text = text.toLowerCase();
+            for(Note noteItem: listNotes){
+                if(noteItem.getText().toLowerCase().contains(text)){
+                    listNotes.add(noteItem);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
 }

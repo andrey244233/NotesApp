@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
+import android.util.Log;
 
 import com.example.admin.notesapp.AddNewNotePackage.AddEditNoteActivityPresenter;
 import com.example.admin.notesapp.AddNewNotePackage.AddNewNoteActivity;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import static android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH;
 import static com.example.admin.notesapp.MainActivityPackage.MainActivity.REQ_CODE_SPEECH_INPUT;
 
 
@@ -71,10 +73,13 @@ public class MainActivityPresenter{
         try {
             mainActivity.startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
         } catch (ActivityNotFoundException a) {
-
+            Log.v("tag", "exception");
         }
 
+
     }
+
+
 
 
 }
